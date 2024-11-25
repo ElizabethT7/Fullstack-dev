@@ -20,7 +20,7 @@ export type GameInProgressEntity = {
 
 export type GameOverEntity = {
   id: string;
-  creator: PlayerEntity;
+  players: PlayerEntity[];
   field: Field;
   status: 'gameOver';
   isDraw?: boolean;
@@ -29,7 +29,7 @@ export type GameOverEntity = {
 
 export type GameOverDrawEntity = {
   id: string;
-  creator: PlayerEntity;
+  players: PlayerEntity[];
   field: Field;
   status: 'gameOverDraw';
 }
