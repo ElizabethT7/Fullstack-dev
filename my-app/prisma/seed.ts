@@ -7,7 +7,7 @@ async function main() {
     data: { login: 'user', passwordHash: 'asd;lff', rating: 100}
   })
   const user2 = await prisma.user.create({
-    data: { login: 'user', passwordHash: 'asd;lff', rating: 130}
+    data: { login: 'user2', passwordHash: 'asd;lff', rating: 130}
   })
   await prisma.game.create({
     data: {

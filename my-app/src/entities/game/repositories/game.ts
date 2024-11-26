@@ -2,6 +2,7 @@ import { Game, Prisma,  User } from "@prisma/client";
 import { GameEntity, GameIdleEntity, GameOverEntity } from "../domain";
 import { prisma } from "@/shared/lib/db";
 import {z} from "zod"
+import { removePassword } from "@/shared/lib/password";
 
 const fieldSchema = z.array(z.union([z.string(), z.null()]));
 
@@ -9,9 +10,10 @@ function dbGameToGameEntity(game: Game & {
   players: User[];
   winner?:  User | null;
 }): GameEntity {
+  const players = game.players.map(removePassword)
   switch (game.status){
     case "idle": {
-      const [creator] = game.players;
+      const [creator] = players;
       if(!creator){
         throw new Error("Creator should be in game idle")
       }
@@ -25,7 +27,7 @@ function dbGameToGameEntity(game: Game & {
     case "gameOverDraw": {
       return {
         id: game.id,
-        players: game.players,
+        players: players,
         status: game.status,
         field: fieldSchema.parse(game.field),
       }
@@ -36,10 +38,10 @@ function dbGameToGameEntity(game: Game & {
       }
       return {
         id: game.id,
-        players: game.players,
+        players: players,
         status: game.status,
         field: fieldSchema.parse(game.field),
-        winner: game.winner,
+        winner: removePassword(game.winner),
       } satisfies GameOverEntity;
     }
   }
@@ -57,5 +59,24 @@ async function gamesList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
   return games.map(dbGameToGameEntity)
 }
 
+async function createGame(game: GameIdleEntity): Promise<GameEntity> {
+  const createdGame = await prisma.game.create({
+    data: {
+      status: game.status,
+      id: game.id,
+      field: Array(9).fill(null),
+      players: {
+        connect: {id: game.creator.id}
+      }
+    },
+    include: {
+      winner: true,
+      players: true,
+    }
+  });
 
-export const gameRepository = { gamesList }
+  return dbGameToGameEntity(createdGame);
+}
+
+
+export const gameRepository = { gamesList, createGame }
