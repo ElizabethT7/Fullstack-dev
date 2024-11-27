@@ -1,3 +1,4 @@
+import { errorType, successType } from "@/shared/lib/either";
 import { PlayerEntity } from "../domain";
 import { gameRepository } from "../repositories/game";
 import cuid from 'cuid';
@@ -8,10 +9,7 @@ export async function createGame(player: PlayerEntity) {
     status: 'idle'
   });
   if(playerGames.some(game => game.status === 'idle' && game.creator.id === player.id)){
-    return {
-      type: 'error',
-      error: 'Player can not create more than one game'
-    } as const;
+    return errorType('Player can not create more than one game' as const);
   }
   const createdGame = await gameRepository.createGame({
     id: cuid(),
@@ -19,5 +17,5 @@ export async function createGame(player: PlayerEntity) {
     status: 'idle'
   });
 
-  return createdGame;
+  return successType(createdGame);
 }
