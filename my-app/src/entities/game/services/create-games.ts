@@ -9,7 +9,7 @@ export async function createGame(player: PlayerEntity) {
     status: 'idle'
   });
   if(playerGames.some(game => game.status === 'idle' && game.creator.id === player.id)){
-    return errorType('Player can not create more than one game' as const);
+    return errorType('cant-create-only-one-game' as const);
   }
   const createdGame = await gameRepository.createGame({
     id: cuid(),
