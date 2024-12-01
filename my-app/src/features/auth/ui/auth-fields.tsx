@@ -3,11 +3,7 @@ import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { useId } from 'react';
 
-export function AuthFields({login, password, onChangeLogin, onChangePassword, errorLogin, errorPassword}: {
-  login: string,
-  password: string,
-  onChangeLogin: (login: string) => void,
-  onChangePassword: (password: string) => void,
+export function AuthFields({ errorLogin, errorPassword}: {
   errorLogin?: React.ReactNode,
   errorPassword?: React.ReactNode,
 }) {
@@ -21,8 +17,6 @@ export function AuthFields({login, password, onChangeLogin, onChangePassword, er
           id={idLogin} 
           name="login" 
           type="login"
-          value={login} 
-          onChange={(e) => onChangeLogin(e.target.value)}
           required
         />
         {errorLogin}
@@ -33,8 +27,6 @@ export function AuthFields({login, password, onChangeLogin, onChangePassword, er
           id={idPassword}
           name="password"
           type="password"
-          value={password} 
-          onChange={(e) => onChangePassword(e.target.value)}
          required
         />
         {errorPassword}

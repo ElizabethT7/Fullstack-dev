@@ -2,25 +2,23 @@
 
 export function AuthFormLayout({
   title,
-  //description,
   fields,
   actions,
   link,
-  onSubmit,
+  action,
   success
 }: {
   title: string,
-  //description: string,
   fields: React.ReactNode,
   actions: React.ReactNode,
   link: React.ReactNode,
   success?: React.ReactNode,
-  onSubmit: React.FormEventHandler<HTMLFormElement>
+  action: (formData: FormData) => void
 }){
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md bg-background">
       <h1 className="mb-6 text-center text-3xl font-bold">{title}</h1>
-        <form onSubmit={onSubmit} className="space-y-4 bg-background">
+        <form action={action} className="space-y-4 bg-background">
           {fields}
           {actions}
           {!!success && success}
