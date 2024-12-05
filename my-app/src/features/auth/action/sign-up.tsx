@@ -1,7 +1,8 @@
 'use server';
 
-import { createUser } from '@/entities/user/server';
+import { createUser, sessionService } from '@/entities/user/server';
 import { errorType, mapErrorType } from '@/shared/lib/either';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const SignInSchema = z.object({
@@ -10,18 +11,22 @@ const SignInSchema = z.object({
 });
 
 export async function signUp(state: unknown, formData: FormData) {
-  console.log(formData.get('login'), 'formData');
-
   const validatedFields = SignInSchema.safeParse({
     login: formData.get('login'),
     password: formData.get('password'),
   });
 
   if (!validatedFields.success) {
-    return errorType(`${validatedFields.error.flatten().fieldErrors}`);
+    return errorType(`Ошибка валидации: ${validatedFields.error.flatten().fieldErrors}`);
   }
 
   const createUserResult = await createUser(validatedFields.data);
+
+  if (createUserResult.type === 'success') {
+    await sessionService.addSession(createUserResult.value);
+
+    redirect('/');
+  }
 
   return mapErrorType(createUserResult, (error) => {
     return {

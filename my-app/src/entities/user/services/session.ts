@@ -27,7 +27,7 @@ async function decrypt(session: string | undefined = '') {
   }
 }
 
-async function setSession(user: UserEntity) {
+async function addSession(user: UserEntity) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const sessionData = userToSession(user, expiresAt.toISOString());
 
@@ -60,4 +60,4 @@ async function verifySession() {
   return { isAuth: true, session: session.value };
 }
 
-export const sessionService = { setSession, deleteSession, verifySession };
+export const sessionService = { addSession, deleteSession, verifySession };
