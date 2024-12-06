@@ -35,7 +35,7 @@ export function SignUpForm() {
       fields={
         <AuthFields
           //errorLogin={<AuthErrorAlert error={state}/>}
-          errorPassword={!!stateErrors ? <AuthErrorAlert error={stateErrors} /> : null}
+          errorPassword={!!stateErrors ? <AuthErrorAlert error={state} /> : null}
         />
       }
       actions={<AuthButton isSubmitting={isSubmitting}>{isSubmitting ? 'Signing up...' : 'Sign Up'}</AuthButton>}
