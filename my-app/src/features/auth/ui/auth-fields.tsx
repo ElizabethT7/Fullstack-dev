@@ -1,11 +1,19 @@
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { ReactNode, useId } from 'react';
+import { AuthErrorAlert } from './auth-error-alert';
 
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { useId } from 'react';
-
-export function AuthFields({ errorLogin, errorPassword}: {
-  errorLogin?: React.ReactNode,
-  errorPassword?: React.ReactNode,
+export function AuthFields({
+  errors,
+  formData,
+  errorsMessage,
+}: {
+  formData?: FormData;
+  errors?: {
+    login?: string;
+    password?: string;
+  };
+  errorsMessage?: ReactNode;
 }) {
   const idLogin = useId();
   const idPassword = useId();
@@ -13,13 +21,8 @@ export function AuthFields({ errorLogin, errorPassword}: {
     <>
       <div className="space-y-2">
         <Label htmlFor={idLogin}>Login</Label>
-        <Input 
-          id={idLogin} 
-          name="login" 
-          type="login"
-          required
-        />
-        {errorLogin}
+        <Input id={idLogin} name="login" type="login" required defaultValue={formData?.get('login')?.toString()} />
+        {errors?.login && <AuthErrorAlert error={errors.login} />}
       </div>
       <div className="space-y-2">
         <Label htmlFor={idPassword}>Password</Label>
@@ -27,11 +30,12 @@ export function AuthFields({ errorLogin, errorPassword}: {
           id={idPassword}
           name="password"
           type="password"
-         required
+          required
+          defaultValue={formData?.get('password')?.toString()}
         />
-        {errorPassword}
+        {errors?.password && <AuthErrorAlert error={errors.password} />}
       </div>
-      </>
-  )
+      {errorsMessage && errorsMessage}
+    </>
+  );
 }
-
