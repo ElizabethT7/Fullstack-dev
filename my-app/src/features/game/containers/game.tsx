@@ -1,11 +1,16 @@
+'use client';
+
 import { GameId } from '@/common/ids';
 import { GameLayout } from '../ui/layout';
 import { GamePlayers } from '../ui/players';
 import { GameDomain } from '@/entities/game';
 import { GameStatus } from '../ui/status';
 import { GameField } from '../ui/field';
+import { useEventsSource } from '@/shared/lib/sse/client';
 
 export function Game({ gameId }: { gameId: GameId }) {
+  const { dataStream, error } = useEventsSource(`game/${gameId}/stream`, 1);
+
   const game: GameDomain.GameEntity = {
     id: gameId,
     players: [
@@ -23,6 +28,13 @@ export function Game({ gameId }: { gameId: GameId }) {
     status: 'inProgress',
     field: [null, null, null, 'o', 'x', null, null, null, null],
   };
+
+  return (
+    <div>
+      {dataStream}
+      {error ? `Ошибка подключения: ${JSON.stringify(error)}` : undefined}
+    </div>
+  );
   return (
     <GameLayout
       players={<GamePlayers game={game} />}
