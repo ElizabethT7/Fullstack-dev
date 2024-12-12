@@ -3,38 +3,17 @@
 import { GameId } from '@/common/ids';
 import { GameLayout } from '../ui/layout';
 import { GamePlayers } from '../ui/players';
-import { GameDomain } from '@/entities/game';
 import { GameStatus } from '../ui/status';
 import { GameField } from '../ui/field';
-import { useEventsSource } from '@/shared/lib/sse/client';
+import { useGame } from '../model/use-game';
 
 export function Game({ gameId }: { gameId: GameId }) {
-  const { dataStream, error } = useEventsSource(`game/${gameId}/stream`, 1);
+  const { game, isPending } = useGame(gameId);
 
-  const game: GameDomain.GameEntity = {
-    id: gameId,
-    players: [
-      {
-        id: '1',
-        login: 'Test',
-        rating: 1000,
-      },
-      {
-        id: '1',
-        login: 'Test',
-        rating: 1000,
-      },
-    ],
-    status: 'inProgress',
-    field: [null, null, null, 'o', 'x', null, null, null, null],
-  };
+  if (!game || isPending) {
+    return <GameLayout status={'Загрузка...'} />;
+  }
 
-  return (
-    <div>
-      {dataStream}
-      {error ? `Ошибка подключения: ${JSON.stringify(error)}` : undefined}
-    </div>
-  );
   return (
     <GameLayout
       players={<GamePlayers game={game} />}
