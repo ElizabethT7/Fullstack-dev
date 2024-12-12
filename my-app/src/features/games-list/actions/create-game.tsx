@@ -1,5 +1,6 @@
 'use server';
 
+import { routes } from '@/common/routes';
 import { createGame } from '@/entities/game/server';
 import { getCurrentUser } from '@/entities/user/server';
 import { errorType } from '@/shared/lib/either';
@@ -14,7 +15,7 @@ export const createGameAction = async () => {
   const gameResult = await createGame(user);
 
   if (gameResult.type === 'success') {
-    redirect(`/game/${gameResult.value.id}`);
+    redirect(routes.game(gameResult.value.id));
   }
   return gameResult;
 };

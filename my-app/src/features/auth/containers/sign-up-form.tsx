@@ -7,6 +7,7 @@ import { AuthButton } from '../ui/auth-button';
 import { AuthLink } from '../ui/auth-link';
 import { signUp, SignUpFormState } from '../action/sign-up';
 import { AuthErrorAlert } from '../ui/auth-error-alert';
+import { routes } from '@/common/routes';
 
 export function SignUpForm() {
   const [state, formAction] = useActionState(signUp, {} satisfies SignUpFormState);
@@ -24,7 +25,7 @@ export function SignUpForm() {
       action={handleSubmit}
       fields={<AuthFields {...state} errorsMessage={<AuthErrorAlert error={state.errors?._errors} />} />}
       actions={<AuthButton isSubmitting={isSubmitting}>{isSubmitting ? 'Signing up...' : 'Sign Up'}</AuthButton>}
-      link={<AuthLink text="Already have an account?" linkText="Sign in" url="/sign-in" />}
+      link={<AuthLink text="Already have an account?" linkText="Sign in" url={routes.signIn()} />}
     />
   );
 }
