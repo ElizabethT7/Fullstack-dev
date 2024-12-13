@@ -2,6 +2,7 @@ import { GameId } from '@/common/ids';
 import { getGameById } from '@/entities/game/server';
 import { sseStream } from '@/shared/lib/sse/server';
 import { NextRequest } from 'next/server';
+import { gameEvents } from '../services/game-events';
 
 export async function getGameStream(req: NextRequest, { params }: { params: Promise<{ id: GameId }> }) {
   const { id } = await params;
@@ -17,6 +18,11 @@ export async function getGameStream(req: NextRequest, { params }: { params: Prom
 
   write(game);
 
-  onClose(() => {});
+  onClose(
+    gameEvents.addListener(game.id, (event) => {
+      write(event.data);
+    })
+  );
+
   return response;
 }

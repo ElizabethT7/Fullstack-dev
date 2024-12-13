@@ -15,6 +15,7 @@ export default async function PrivateLayout({ children }: { children: React.Reac
             action={async () => {
               //можно передавать коллбеки как серверные экшены
               'use server';
+
               sessionService.deleteSession();
               redirect(routes.signIn());
             }}

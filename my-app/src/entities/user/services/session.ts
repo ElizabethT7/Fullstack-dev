@@ -2,9 +2,9 @@ import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { SessionEntity, UserEntity, userToSession } from '../domain';
 import { errorType, successType } from '@/shared/lib/either';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { routes } from '@/common/routes';
+import { cookies } from 'next/headers';
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
