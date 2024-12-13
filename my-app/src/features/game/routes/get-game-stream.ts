@@ -19,7 +19,7 @@ export async function getGameStream(req: NextRequest, { params }: { params: Prom
   write(game);
 
   onClose(
-    gameEvents.addListener(game.id, (event) => {
+    await gameEvents.addListener(game.id, (event) => {
       write(event.data);
     })
   );
