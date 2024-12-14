@@ -37,7 +37,7 @@ model GamePlayer {
   userId       String
   user         User @relation(fields: [userId], references: [id])
   index        Int
-  @@id([gameId, userId])
+  Game         Game[]
 }
 
 model User {
