@@ -18,11 +18,13 @@ export async function getGameStream(req: NextRequest, { params }: { params: Prom
 
   write(game);
 
-  onClose(
-    await gameEvents.addListener(game.id, (event) => {
-      write(event.data);
-    })
-  );
+  const unwatch = await gameEvents.addListener(game.id, (event) => {
+    write(event.data);
+  });
+
+  onClose(() => {
+    unwatch();
+  });
 
   return response;
 }
