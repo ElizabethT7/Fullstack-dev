@@ -100,13 +100,21 @@ async function startGame(gameId: GameId, player: PlayerEntity) {
 }
 
 async function saveGame(game: GameInProgressEntity | GameOverDrawEntity | GameOverEntity) {
+  const winnerId =
+    game.status === 'gameOver'
+      ? await prisma.gamePlayer
+          .findFirstOfThrow({
+            where: { userId: game.winner?.id },
+          })
+          .then((p) => p.id)
+      : undefined;
   return dbGameToGameEntity(
     await prisma.game.update({
       where: { id: game.id },
       data: {
         status: game.status,
         field: game.field,
-        winnerId: game.status === 'gameOver' ? game.winner.id : undefined,
+        winnerId: winnerId,
       },
       include: gameInclude,
     })
