@@ -27,7 +27,7 @@ export type GameOverEntity = {
   field: Field;
   status: 'gameOver';
   isDraw?: boolean;
-  winner?: PlayerEntity;
+  winner: PlayerEntity;
 };
 
 export type GameOverDrawEntity = {
@@ -53,24 +53,24 @@ export const getGameCurrentSymbol = (game: GameInProgressEntity | GameOverDrawEn
   return symbols % 1 === 0 ? GameSymbol.x : GameSymbol.o;
 };
 
-export const getNextSymbol = (gameSymbol: GameSymbol) => {
-  if (gameSymbol === GameSymbol.x) {
-    return GameSymbol.o;
-  }
-  return GameSymbol.x;
-};
-
-export const getPlayerSymbol = (player: PlayerEntity, game: GameInProgressEntity) => {
+export const getPlayerSymbol = (player: PlayerEntity, game: GameInProgressEntity | GameOverEntity) => {
   const index = game.players.findIndex((p) => p.id === player.id);
 
   return { 0: GameSymbol.x, 1: GameSymbol.o }[index];
 };
 
-export const doStep = (game: GameInProgressEntity, index: number, player: PlayerEntity) => {
+export const doStep = ({
+  game,
+  index,
+  player,
+}: {
+  game: GameInProgressEntity;
+  index: number;
+  player: PlayerEntity;
+}) => {
   const currentSymbol = getGameCurrentSymbol(game);
-  const nextSymbol = getNextSymbol(currentSymbol);
 
-  if (nextSymbol !== getPlayerSymbol(player, game)) {
+  if (currentSymbol !== getPlayerSymbol(player, game)) {
     return errorType('not-player-symbol');
   }
 
@@ -78,7 +78,7 @@ export const doStep = (game: GameInProgressEntity, index: number, player: Player
     return errorType('game-cell-already-has-symbol');
   }
 
-  const newField = game.field.map((cell, i) => (i === index ? nextSymbol : cell));
+  const newField = game.field.map((cell, i) => (i === index ? currentSymbol : cell));
 
   const winner = calculateWinner(newField);
 
@@ -102,7 +102,7 @@ export const doStep = (game: GameInProgressEntity, index: number, player: Player
   return successType({
     ...game,
     field: newField,
-  });
+  } satisfies GameInProgressEntity);
 };
 
 function isDraw(squares: Field) {

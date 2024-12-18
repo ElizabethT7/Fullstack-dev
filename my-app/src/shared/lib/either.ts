@@ -38,8 +38,8 @@ export const mapErrorType = <V, E, E2>(either: Either<E, V>, fn: (value: E) => E
 export const matchEither = <E, V, V2>(
   either: Either<E, V>,
   mathers: {
-    errorType: (error: E) => V2;
-    successType: (value: V) => V2;
+    errorType: (error: NoInfer<E>) => V2;
+    successType: (value: NoInfer<V>) => V2;
   }
 ): V2 => {
   if (either.type === 'error') {

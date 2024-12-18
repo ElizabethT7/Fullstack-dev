@@ -7,14 +7,20 @@ import { GameField } from '../ui/field';
 import { useGame } from '../model/use-game';
 import { GameDomain } from '@/entities/game';
 
-export function GameClient({ defaultGame }: { defaultGame: GameDomain.GameEntity }) {
-  const { game = defaultGame, step } = useGame(defaultGame.id);
+export function GameClient({
+  defaultGame,
+  player,
+}: {
+  defaultGame: GameDomain.GameEntity;
+  player: GameDomain.PlayerEntity;
+}) {
+  const { game = defaultGame, step } = useGame(defaultGame.id, player);
 
   return (
     <GameLayout
       players={<GamePlayers game={game} />}
       status={<GameStatus game={game} />}
-      field={<GameField game={game} onCellClick={step}/>}
+      field={<GameField game={game} onCellClick={step} />}
     />
   );
 }

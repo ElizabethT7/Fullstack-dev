@@ -9,7 +9,7 @@ export function GameStatus({ game }: { game: GameDomain.GameEntity }) {
         </div>
       );
     case 'inProgress': {
-      const currentSymbol = GameDomain.getGameCurrentStep(game);
+      const currentSymbol = GameDomain.getGameCurrentSymbol(game);
 
       return (
         <div className="flex flex-row gap-4 justify-between">
@@ -18,7 +18,7 @@ export function GameStatus({ game }: { game: GameDomain.GameEntity }) {
       );
     }
     case 'gameOver': {
-      const currentSymbol = GameDomain.getGameCurrentStep(game);
+      const currentSymbol = GameDomain.getPlayerSymbol(game.winner, game);
 
       return (
         <div className="flex flex-row gap-4 justify-between">

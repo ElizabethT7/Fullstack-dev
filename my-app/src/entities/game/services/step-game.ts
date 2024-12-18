@@ -17,7 +17,7 @@ export async function stepGame(gameId: GameId, player: PlayerEntity, index: numb
     return errorType('player-is-not-in-game');
   }
 
-  const stepResult = doStep(game, index, player);
+  const stepResult = doStep({ game, index, player });
 
   if (stepResult.type === 'error') {
     return stepResult;
