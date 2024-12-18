@@ -2,6 +2,7 @@ import { GameId } from '@/common/ids';
 import { doStep, PlayerEntity } from '../domain';
 import { gameRepository } from '../repositories/game';
 import { errorType, successType } from '@/shared/lib/either';
+import { gameEvents } from './game-events';
 
 export async function stepGame(gameId: GameId, player: PlayerEntity, index: number) {
   const game = await gameRepository.getGame({ id: gameId });
@@ -23,5 +24,12 @@ export async function stepGame(gameId: GameId, player: PlayerEntity, index: numb
     return stepResult;
   }
 
-  return successType(await gameRepository.saveGame(stepResult.value));
+  const newGame = await gameRepository.saveGame(stepResult.value);
+
+  await gameEvents.emit({
+    type: 'game-changed',
+    data: newGame,
+  });
+
+  return successType(newGame);
 }

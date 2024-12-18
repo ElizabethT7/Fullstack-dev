@@ -2,6 +2,7 @@ import { GameId } from '@/common/ids';
 import { PlayerEntity } from '../domain';
 import { gameRepository } from '../repositories/game';
 import { errorType, successType } from '@/shared/lib/either';
+import { gameEvents } from './game-events';
 
 export async function surrenderGame(gameId: GameId, player: PlayerEntity) {
   const game = await gameRepository.getGame({ id: gameId });
@@ -17,11 +18,16 @@ export async function surrenderGame(gameId: GameId, player: PlayerEntity) {
     return errorType('player-is-not-in-game' as const);
   }
 
-  return successType(
-    await gameRepository.saveGame({
-      ...game,
-      status: 'gameOver',
-      winner: game.players.find((p) => p.id !== player.id)!,
-    })
-  );
+  const newGame = await gameRepository.saveGame({
+    ...game,
+    status: 'gameOver',
+    winner: game.players.find((p) => p.id !== player.id)!,
+  });
+
+  await gameEvents.emit({
+    type: 'game-changed',
+    data: newGame,
+  });
+
+  return successType(newGame);
 }

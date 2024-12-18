@@ -2,7 +2,7 @@ import { GameId } from '@/common/ids';
 import { getGameById, surrenderGame } from '@/entities/game/server';
 import { sseStream } from '@/shared/lib/sse/server';
 import { NextRequest } from 'next/server';
-import { gameEvents } from '../services/game-events';
+import { gameEvents } from '../../../entities/game/services/game-events';
 import { getCurrentUser } from '@/entities/user/server';
 
 export async function getGameStream(req: NextRequest, { params }: { params: Promise<{ id: GameId }> }) {
@@ -20,18 +20,13 @@ export async function getGameStream(req: NextRequest, { params }: { params: Prom
 
   write(game);
 
-  const unwatch = await gameEvents.addListener(game.id, (event) => {
+  const unwatch = await gameEvents.addGameChangedListener(game.id, (event) => {
     write(event.data);
   });
 
   onClose(async () => {
+    await surrenderGame(id, user);
     unwatch();
-
-    const result = await surrenderGame(id, user);
-
-    if (result.type === 'success') {
-      gameEvents.emit(result.value);
-    }
   });
 
   return response;
